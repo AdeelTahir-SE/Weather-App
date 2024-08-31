@@ -11,7 +11,7 @@ const router =createBrowserRouter([
     element:<App/>
   }
   ,{
-    path:"/weather/:id",
+    path:"/weather/:city/:date",
     element:<Weatherdetails/>
   }
   ,{

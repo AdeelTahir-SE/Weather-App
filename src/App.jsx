@@ -29,27 +29,25 @@ function App() {
   const [fetchdata, setfetchdata] = useState(true);
   const [background, setbackground] = useState(rain);
   const [error, seterror] = useState();
-  const [loader,setloader]=useState(false);
+  const [loader, setloader] = useState(true);
 
   useEffect(() => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
     async function fetchData() {
-setWeekData([])
+      setWeekData([]);
       try {
         const WeekDataResponse = await fetch(
-          `http://localhost:3000/api/weekdata/${paramsdetails.city||"Faisalabad"}`,
+          `http://localhost:3000/api/weekdata/${paramsdetails.city || "Faisalabad"}`,
           { signal: controller.signal }
         );
         const WeekDataResponseParsed = await WeekDataResponse.json();
         setWeekData(WeekDataResponseParsed);
-setloader(false)
-       
+        setloader(false);
       } catch (error) {
         if (error.name === 'AbortError') {
           // Retry fetching data after abort
-  
         } else {
           console.error(error);
           seterror(error.message || "An unexpected error occurred.");
@@ -75,7 +73,6 @@ setloader(false)
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      console.log(paramsdetails.city)
       setfetchdata(true);
       setloader(true);
     }
@@ -104,9 +101,9 @@ setloader(false)
           needs.
         </p>
 
-        <div className="text-black flex flex-col bg-slate-800 p-6 w-2/5 m-auto">
+        <div className="text-black flex flex-col bg-slate-800 p-6 w-4/5  m-auto">
           <input
-            className="p-4 mb-4 bg-slate-400 rounded-lg placeholder:text-white"
+            className="p-4 mb-4 bg-slate-400 rounded-lg placeholder:text-white placeholder:text-center hover:bg-slate-500 cursor-pointer"
             type="text"
             placeholder="cityname"
             value={paramsdetails.city}
@@ -117,9 +114,10 @@ setloader(false)
               }))
             }
             onKeyDown={handleKeyDown}
+            disabled={loader}
           />
           <input
-            className="p-4 bg-slate-400 rounded-lg placeholder:text-white"
+            className="p-4 bg-slate-400 rounded-lg placeholder:text-white placeholder:text-center hover:bg-slate-500 cursor-pointer"
             type="text"
             placeholder="date (YYYY-MM-DD)"
             value={paramsdetails.date}
@@ -129,49 +127,54 @@ setloader(false)
                 date: e.target.value,
               }))
             }
+            disabled={loader}
             onKeyDown={handleKeyDown}
           />
         </div>
       </div>
-{loader&&<div>
-  <div className="flex flex-row gap-2">
-  <div className="w-4 h-4 rounded-full bg-blue-500 animate-bounce"></div>
-  <div
-    className="w-4 h-4 rounded-full bg-blue-600 animate-bounce [animation-delay:-.3s]"
-  ></div>
-  <div
-    className="w-4 h-4 rounded-full bg-blue-800 animate-bounce [animation-delay:-.5s]"
-  ></div>
-</div>
-</div>}
-      <div className="relative z-10 bg-opacity-45 h-auto bg-slate-500 flex flex-col items-center w-full justify-around mt-7">
+
+      {loader && (
+        <div className="flex flex-row gap-2">
+          <div className="w-4 h-4 rounded-full bg-blue-500 animate-bounce"></div>
+          <div
+            className="w-4 h-4 rounded-full bg-blue-600 animate-bounce [animation-delay:-.3s]"
+          ></div>
+          <div
+            className="w-4 h-4 rounded-full bg-blue-800 animate-bounce [animation-delay:-.5s]"
+          ></div>
+        </div>
+      )}
+
+      <div className="relative z-10 bg-opacity-45 h-auto bg-slate-500 flex flex-wrap lg:flex-wrap  flex-col items-center w-full justify-center mt-7">
         {error && (
           <p className="text-center bg-red-600 text-white p-2 rounded">{error}</p>
         )}
 
         {weekData &&
           weekData.map((v) => (
-            <WeatherCard
-              key={v.datetimeEpoch}
-              weatherDescription={v.description}
-              weatherTitle={v.conditions}
-              temperature={v.temp}
-              visibility={v.visibility}
-              date={v.datetime}
-              humidity={v.humidity}
-              feelsLike={v.feelslike}
-              dewPoint={v.dew}
-              windSpeed={v.windspeed}
-              windGust={v.windgust}
-              pressure={v.pressure}
-              cloudCover={v.cloudcover}
-              solarRadiation={v.solarradiation}
-              uvIndex={v.uvindex}
-              moonPhase={v.moonphase}
-              sunrise={v.sunrise}
-              sunset={v.sunset}
-              address={v.address}
-            />
+            <div key={v.datetimeEpoch} className="sm:w-5/6 md:w-5/6 lg:w-5/6  p-2">
+              <WeatherCard
+                weatherDescription={v.description}
+                weatherTitle={v.conditions}
+                temperature={v.temp}
+                visibility={v.visibility}
+                date={v.datetime}
+                humidity={v.humidity}
+                feelsLike={v.feelslike}
+                dewPoint={v.dew}
+                windSpeed={v.windspeed}
+                windGust={v.windgust}
+                pressure={v.pressure}
+                cloudCover={v.cloudcover}
+                solarRadiation={v.solarradiation}
+                uvIndex={v.uvindex}
+                moonPhase={v.moonphase}
+                sunrise={v.sunrise}
+                sunset={v.sunset}
+                address={v.address}
+                city={paramsdetails.city || "Faisalabad"}
+              />
+            </div>
           ))}
       </div>
     </div>
